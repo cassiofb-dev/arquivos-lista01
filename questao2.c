@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
 
     registros_lidos++;
 
-    if(cadastro.cpf == cadastro_anterior.cpf) {
+    if(strncmp(cadastro.cpf, cadastro_anterior.cpf, 15) == 0) {
       // verifica se os cpfs sao iguais
 
       if(cadastro.id_inscricao < cadastro_anterior.id_inscricao) {

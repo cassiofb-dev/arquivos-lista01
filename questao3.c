@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 
 struct Registro {
@@ -79,7 +80,7 @@ int main(int argc, char* argv[]) {
 
   while(codigo_leitura_um && codigo_leitura_dois){
 
-    if(cadastro_um.cpf == cadastro_dois.cpf) {
+    if(strncmp(cadastro_um.cpf, cadastro_dois.cpf, 15) == 0) {
       // se o cpf for igual printa
       printf("\n%s", cadastro_um.cpf);
     }
