@@ -1,7 +1,5 @@
-# ignora dados e binarios
+# ignora binarios
 
 *.bin
 *.run
 *.exe
-*.dat
-*.txt

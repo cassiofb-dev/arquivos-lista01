@@ -6,12 +6,8 @@
 
 struct Registro {
   int id_inscricao;
-  char curso[20];
-  char cpf[15];
-  char dataNacimento[11];
-  char sexo;
-  char email[40];
-  char opcaoQuadro;
+  char cpf[4];
+  char fim_linha;
 };
 
 int main(int argc, char* argv[]) {
@@ -43,9 +39,10 @@ int main(int argc, char* argv[]) {
   if(tamanho_arquivo % sizeof(struct Registro) ){
     fprintf(
       stderr,
-      "Arquivo corrompido\nTamanho do arquivo: %d\nTamanho do registro: %d",
+      "Arquivo corrompido\nTamanho do arquivo: %d\nTamanho do registro: %d\nNumero de registros: %d",
       tamanho_arquivo,
-      sizeof(struct Registro)
+      sizeof(struct Registro),
+      numero_registros
     );
     return 1;
   }
@@ -70,7 +67,6 @@ int main(int argc, char* argv[]) {
   // armazena a quantidade de registros lidos
   long registros_lidos = 0;
 
-  // le o primeiro registro
   fread(
     &cadastro,
     sizeof(struct Registro),
@@ -78,10 +74,17 @@ int main(int argc, char* argv[]) {
     ponteiro_arquivo_leitura
   );
 
-  registros_lidos++;
+  cadastro_valido = cadastro;
 
   // percorre os registros (no minimo 2)
   while(registros_lidos < numero_registros) {
+    printf(
+      "cpf: %.4s | id: %d: valido cpf: %.4s id: %d",
+      cadastro.cpf,
+      cadastro.id_inscricao,
+      cadastro_valido.cpf,
+      cadastro_valido.id_inscricao
+    );
     fread(
       &cadastro,
       sizeof(struct Registro),
@@ -90,7 +93,7 @@ int main(int argc, char* argv[]) {
     );
     registros_lidos ++;
 
-    if(strncmp(cadastro.cpf, cadastro_valido.cpf, 15) == 0) {
+    if(strncmp(cadastro.cpf, cadastro_valido.cpf, 4) == 0) {
       if(cadastro.id_inscricao > cadastro_valido.id_inscricao) {
         cadastro_valido = cadastro;
       }
@@ -101,6 +104,7 @@ int main(int argc, char* argv[]) {
           1,
           ponteiro_arquivo_escrita
         );
+        printf(" <-- ESCRITO!");
       }
     } else {
       fwrite(
@@ -109,7 +113,9 @@ int main(int argc, char* argv[]) {
         1,
         ponteiro_arquivo_escrita
       );
+      printf(" <-- ESCRITO!");
       cadastro_valido = cadastro;
     }
+    printf("\n");
   }
 }

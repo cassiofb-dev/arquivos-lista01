@@ -6,12 +6,8 @@
 
 struct Registro {
   int id_inscricao;
-  char curso[20];
-  char cpf[15];
-  char dataNacimento[11];
-  char sexo;
-  char email[40];
-  char opcaoQuadro;
+  char cpf[4];
+  char fim_linha;
 };
 
 int main(int argc, char* argv[]) {
@@ -50,12 +46,21 @@ int main(int argc, char* argv[]) {
   // reseta o indicador de posicao do arquivo
   fseek(ponteiro_arquivo_leitura_um, 0L, SEEK_SET);
 
-  // abre arquivo para escrita
+  // abre segundo arquivo para leitura
   FILE *ponteiro_arquivo_leitura_dois = fopen(argv[2], "r");
 
   //verifica se o arquivo foi aberto com sucesso
   if(ponteiro_arquivo_leitura_dois == NULL) {
     fprintf(stderr, "Arquivo de entrada dois inexistente");
+    return 1;
+  }
+
+  // abre arquivo para escrita
+  FILE *ponteiro_arquivo_escrita = fopen("cpf_printado.dat", "w");
+
+  //verifica se o arquivo foi aberto com sucesso
+  if(ponteiro_arquivo_escrita == NULL) {
+    fprintf(stderr, "Nao foi possivel abrir arquivo para escrita");
     return 1;
   }
 
@@ -85,15 +90,21 @@ int main(int argc, char* argv[]) {
   while(codigo_leitura_um && codigo_leitura_dois){
 
     if(
-      strncmp(cadastro_um.cpf, cadastro_dois.cpf, 15) == 0 &&
-      strncmp(cadastro_um.cpf, cadastro_printado.cpf, 15) != 0
+      strncmp(cadastro_um.cpf, cadastro_dois.cpf, 4) == 0 &&
+      strncmp(cadastro_um.cpf, cadastro_printado.cpf, 4) != 0
     ) {
       // se o cpf for igual printa e nao printado
-      printf("%.4s\n", cadastro_um.email);
+      printf("%.4s\n", cadastro_um.cpf);
+      fwrite(
+        &cadastro_um,
+        sizeof(struct Registro),
+        1,
+        ponteiro_arquivo_escrita
+      );
       cadastro_printado = cadastro_um;
     }
     
-    if(strncmp(cadastro_um.cpf, cadastro_dois.cpf, 15) < 0) {
+    if(strncmp(cadastro_um.cpf, cadastro_dois.cpf, 4) < 0) {
       // se cpf do arquivo um for menor
       codigo_leitura_um = fread(
         &cadastro_um,
